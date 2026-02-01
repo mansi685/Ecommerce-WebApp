@@ -1,0 +1,17 @@
+# Virtual Environment
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Django database
+db.sqlite3
+
+# Static & media files
+static/
+media/
+
+# Node (if any)
+node_modules/
+package-lock.json
