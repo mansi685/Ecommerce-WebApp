@@ -143,5 +143,9 @@ Please adhere to this project's `code of conduct`.
 ## Workflow Demonstration
 This change was added using the GitFlow feature branch workflow.
 
+## Shopping Cart Improvements
+- Improved cart UI
+- Added quantity validation
+
 
 
