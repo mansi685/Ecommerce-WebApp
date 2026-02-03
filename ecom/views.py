@@ -1,11 +1,13 @@
-from django.shortcuts import render,redirect,reverse
-from . import forms,models
-from django.http import HttpResponseRedirect,HttpResponse
+from django.shortcuts import render, redirect, reverse
+from . import forms, models
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
 from django.core.mail import send_mail
 from django.contrib.auth.models import Group
-from django.contrib.auth.decorators import login_required,user_passes_test
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.conf import settings
+from django.views.decorators.http import require_POST
+
 
 def home_view(request):
     products=models.Product.objects.all()
@@ -556,3 +558,21 @@ def contactus_view(request):
             send_mail(str(name)+' || '+str(email),message, settings.EMAIL_HOST_USER, settings.EMAIL_RECEIVING_USER, fail_silently = False)
             return render(request, 'ecom/contactussuccess.html')
     return render(request, 'ecom/contactus.html', {'form':sub})
+
+# --------------------------------------------------
+# HOTFIX v1.0.1
+# Prevent invalid quantity values in cart requests
+# --------------------------------------------------
+from django.views.decorators.http import require_POST
+from django.http import HttpResponseBadRequest
+
+@require_POST
+def validate_quantity(request):
+    try:
+        quantity = int(request.POST.get("quantity", 1))
+        if quantity <= 0:
+            return HttpResponseBadRequest("Invalid quantity")
+    except (TypeError, ValueError):
+        return HttpResponseBadRequest("Invalid quantity format")
+
+    return HttpResponse("Quantity validated successfully")
