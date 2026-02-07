@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.conf import settings
 from django.views.decorators.http import require_POST
-
+from django.db.models import Q
 
 def home_view(request):
     products=models.Product.objects.all()
@@ -207,22 +207,52 @@ def view_feedback_view(request):
 #------------------------ PUBLIC CUSTOMER RELATED VIEWS START ---------------------
 #---------------------------------------------------------------------------------
 def search_view(request):
-    # whatever user write in search box we get in query
-    query = request.GET['query']
-    products=models.Product.objects.all().filter(name__icontains=query)
+    # Get search query safely
+    query = request.GET.get('query', '').strip()
+
+    # Show all products by default
+    products = models.Product.objects.all()
+
+    # Improved search (Name + Description)
+    if query:
+        products = products.filter(
+            Q(name__icontains=query) |
+            Q(description__icontains=query)
+        )
+
+    # Cart counter logic
     if 'product_ids' in request.COOKIES:
         product_ids = request.COOKIES['product_ids']
-        counter=product_ids.split('|')
-        product_count_in_cart=len(set(counter))
+        counter = product_ids.split('|')
+        product_count_in_cart = len(set(counter))
     else:
-        product_count_in_cart=0
+        product_count_in_cart = 0
 
-    # word variable will be shown in html when user click on search button
-    word="Searched Result :"
+    word = "Search Results :"
 
+    # If user logged in
     if request.user.is_authenticated:
-        return render(request,'ecom/customer_home.html',{'products':products,'word':word,'product_count_in_cart':product_count_in_cart})
-    return render(request,'ecom/index.html',{'products':products,'word':word,'product_count_in_cart':product_count_in_cart})
+        return render(
+            request,
+            'ecom/customer_home.html',
+            {
+                'products': products,
+                'word': word,
+                'product_count_in_cart': product_count_in_cart
+            }
+        )
+
+    # If user not logged in
+    return render(
+        request,
+        'ecom/index.html',
+        {
+            'products': products,
+            'word': word,
+            'product_count_in_cart': product_count_in_cart
+        }
+    )
+
 
 
 # any one can add product to cart, no need of signin
