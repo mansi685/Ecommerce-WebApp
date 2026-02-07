@@ -143,7 +143,18 @@ Please adhere to this project's `code of conduct`.
 ## Workflow Demonstration
 This change was added using the GitFlow feature branch workflow.
 
+feature/product-search-improvements
+## Shopping Cart Improvements
+- Improved cart UI
+- Added quantity validation
+
 This change demonstrates Trunk-Based workflow with a short-lived branch.
 
+trunk-based-experiment
 
+
+
+"force branch protection ci" 
+
+Hotfix: minor production bug fix
 
