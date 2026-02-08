@@ -158,3 +158,8 @@ trunk-based-experiment
 
 Hotfix: minor production bug fix
 
+## CI Status
+
+This project uses GitHub Actions with Trunk-Based Development.
+All changes are merged directly into `main` after passing CI.
+
